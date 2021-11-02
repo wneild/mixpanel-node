@@ -60,6 +60,7 @@ declare namespace mixpanel {
 
     import_batch(eventNames: string[], options?: BatchOptions, callback?: BatchCallback): void;
     import_batch(eventNames: string[], callback?: BatchCallback): void;
+    import_batch(events: Event[], options?: BatchOptions, callback?: BatchCallback): void;
     import_batch(events: Event[], callback?: BatchCallback): void;
 
     alias(distinctId: string, alias: string, callback?: Callback): void;
