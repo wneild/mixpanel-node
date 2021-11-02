@@ -14,7 +14,8 @@ exports.config = {
             host: 'api.mixpanel.com',
             protocol: 'https',
             path: '',
-            requestAgent: null
+            requestAgent: null,
+            requestTimeout: null
         }, "default config is incorrect");
         test.done();
     },
