@@ -242,6 +242,52 @@ exports.send_request = {
 
         test.done();
     },
+    
+  "uses requestAgent if set": function (test) {
+        delete process.env.HTTP_PROXY;
+        delete process.env.HTTPS_PROXY;
+
+        var requestAgent = Sinon.stub();
+
+        var proxyMixpanel = Mixpanel.init('token', { requestAgent });
+        proxyMixpanel.send_request({ endpoint: '', data: {} });
+
+        var getConfig = https.request.firstCall.args[0];
+        test.ok(getConfig.agent === requestAgent, "send_request didn't call https.request with agent");
+
+        test.done();
+    },
+    
+    "uses requestAgent over HTTP_PROXY if both are set": function(test) {
+      HttpsProxyAgent.reset(); // Mixpanel is instantiated in setup, need to reset callcount
+      delete process.env.HTTPS_PROXY;
+      process.env.HTTP_PROXY = 'this.aint.real.https';
+
+      var requestAgent = Sinon.stub();
+
+      var proxyMixpanel = Mixpanel.init('token', { requestAgent });
+      proxyMixpanel.send_request({ endpoint: '', data: {} });
+
+      var getConfig = https.request.firstCall.args[0];
+      test.ok(getConfig.agent === requestAgent, "send_request didn't call https.request with agent");
+
+      test.done();
+    },
+
+    "uses requestAgent over HTTPS_PROXY if both are set": function(test) {
+        HttpsProxyAgent.reset(); // Mixpanel is instantiated in setup, need to reset callcount
+        delete process.env.HTTP_PROXY;
+        process.env.HTTPS_PROXY = 'this.aint.real.https';
+        var requestAgent = Sinon.stub();
+
+        var proxyMixpanel = Mixpanel.init('token', { requestAgent });
+        proxyMixpanel.send_request({ endpoint: '', data: {} });
+
+        var getConfig = https.request.firstCall.args[0];
+        test.ok(getConfig.agent !== undefined, "send_request didn't call https.request with agent");
+
+        test.done();
+    },
 
     "requires credentials for import requests": function(test) {
         test.throws(
